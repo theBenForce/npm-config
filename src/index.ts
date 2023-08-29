@@ -3,4 +3,7 @@ import { addCommands } from './commands';
 
 addCommands(program)
     .parseAsync(process.argv)
-    .then(() => console.info(`Done!`));
+    .catch((e) => {
+        console.error(e);
+        process.exit(1);
+    });

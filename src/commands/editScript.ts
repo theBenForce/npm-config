@@ -4,6 +4,7 @@ import { ConfigDB, ScriptTypes } from "../controller/db";
 import { getScriptName } from "../utils/getScriptName";
 
 export const editScriptCommand = new Command('edit-script')
+    .description('Edit a script that will run before or after loading a config')
     .addArgument(new Argument('[config]', 'Name of the npm script'))
     .addOption(new Option('--type <type>', 'Type of the script'))
     .action(async (name: string, {type}: {type: string}) => {

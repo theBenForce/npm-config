@@ -5,6 +5,7 @@ import { getScriptName } from "../utils/getScriptName";
 
 
 export const viewScriptCommand = new Command('view-script')
+    .description('View a script that will run before or after loading a config')
     .addArgument(new Argument('[config]', 'Name of the npm config'))
     .addOption(new Option('--script <script>', 'Name of the npm script'))
     .action(async (name: string, {script}: {script: string}) => {

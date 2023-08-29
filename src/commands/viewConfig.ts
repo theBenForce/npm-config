@@ -3,6 +3,7 @@ import { ConfigDB } from "../controller/db";
 import { getConfigName } from "../utils/getConfigName";
 
 export const viewConfigCommand = new Command('view-config')
+    .description('View the contents of a config')
     .addArgument(new Argument('[name]', 'Name of the npm config'))
     .action(async (name: string) => {
         const db = ConfigDB.instance;

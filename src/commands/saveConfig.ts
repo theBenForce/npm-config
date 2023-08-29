@@ -5,7 +5,9 @@ import { ConfigDB } from "../controller/db";
 import { getConfigPath } from '../utils/getConfigPath';
 
 export const saveNpmConfigCommand = new Command('save-config')
+    .description('Save, or create, an npm config based on the current settings')
     .addArgument(new Argument('[name]', 'Name of the npm config'))
+    .addOption(new Option('--empty', 'Create an empty config'))
     .addOption(new Option('--global', 'Save the global config'))
     .action(async (name: string, flags: Record<string, boolean>) => {
 
@@ -22,21 +24,25 @@ export const saveNpmConfigCommand = new Command('save-config')
             return;
         }
 
-        const filename = getConfigPath(flags.global);
+        let content = '';
+        let filename = '';
 
-        if(!fs.existsSync(filename)) {
-            console.error(`Cannot find ${filename}`);
-            return;
+        if(!flags.empty) {
+            filename = getConfigPath(flags.global);
+
+            if(!fs.existsSync(filename)) {
+                throw new Error(`Cannot find ${filename}`);
+            }
+
+            console.info(`Saving ${flags.global ? 'global' : 'local'} npm config as ${name}`);
+            content = await fs.promises.readFile(filename, 'utf-8');
         }
-
-        console.info(`Saving ${flags.global ? 'global' : 'local'} npm config as ${name}`);
-        const content = await fs.promises.readFile(filename, 'utf-8');
 
         const db = ConfigDB.instance;
 
         db.upsert({
             name,
-            source: filename,
+            source: filename || 'empty',
             created: new Date(),
             updated: new Date(),
             content,

@@ -60,21 +60,31 @@ export class ConfigDB {
         return this._records.find(r => r.name === name);
     }
 
+    private async editText(filename: string, content: string): Promise<string> {
+        const tempFilename = path.join(os.tmpdir(), filename);
+
+        fs.writeFileSync(tempFilename, content, 'utf-8');
+
+        const editor = process.env.EDITOR || 'vi';
+
+        childProcess.spawnSync(editor, [tempFilename], {
+            stdio: 'inherit',
+        });
+        
+        const result = fs.readFileSync(tempFilename, 'utf-8');
+        await fs.promises.unlink(tempFilename);
+
+        return result;
+    }
 
     async editScript(name: string, type: ScriptTypes = ScriptTypes.PostLoad): Promise<void> {
         const config = this.get(name);
 
-        const tempFilename = path.join(os.tmpdir(), `npmrepos-${name}-${type}.sh`);
+        if(!config) {
+            throw new Error(`Cannot find config ${name}`);
+        }
 
-        fs.writeFileSync(tempFilename, config?.scripts?.[type] || '');
-
-        const editor = process.env.EDITOR || 'vi';
-
-        const result = childProcess.spawnSync(editor, [tempFilename], {
-            stdio: 'inherit',
-        });
-        
-        const script = fs.readFileSync(tempFilename, 'utf-8');
+        const script = await this.editText(`npmrepos-${name}-${type}.sh`, config?.scripts?.[type] || '');
         this.upsert({
             ...config!,
             scripts: {
@@ -82,8 +92,22 @@ export class ConfigDB {
                 [type]: script,
             },
         });
+    }
 
-        await fs.promises.unlink(tempFilename);
+
+    async editConfig(name: string) {
+        const config = this.get(name);
+
+        if(!config) {
+            throw new Error(`Cannot find config ${name}`);
+        }
+
+        const content = await this.editText(`npmrepos-${name}.json`, config.content);
+
+        this.upsert({
+            ...config,
+            content,
+        });
     }
 
     public async loadConfig(name: string, global: boolean = false) {
