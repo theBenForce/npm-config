@@ -24,7 +24,7 @@ export const loadNpmConfigCommand = new Command('load-config')
             message: `Are you sure you want to load ${config.name} as ${flags.global ? 'global' : 'local'} npm config?`,
         });
 
-        if (!confirmation) {
+        if (confirmation.toLocaleLowerCase()[0] === 'n') {
             console.info('Aborting');
             return;
         }
