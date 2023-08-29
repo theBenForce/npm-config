@@ -38,13 +38,33 @@ export class ConfigDB {
     }
 
     private get dbFilename() {
-        return os.homedir() + '/.npmrepos.json';
+        return path.join(os.homedir(), '/.npmrepos.json');
+    }
+
+    private get localDbFilename() {
+        return path.join(process.cwd(), '.npmrepos.json');
     }
 
     private loadDatabase() {
-        if (fs.existsSync(this.dbFilename)) {
-            this._records = JSON.parse(fs.readFileSync(this.dbFilename, 'utf-8'));
+        this._records = [];
+
+        for(const filename in [this.dbFilename, this.localDbFilename]) {
+            if (fs.existsSync(filename)) {
+                const newRecords = JSON.parse(fs.readFileSync(filename, 'utf-8'));
+                const addMeta = (record: ConfigRecord) => ({
+                    ...record,
+                    filename,
+                });
+
+                if (Array.isArray(newRecords)) {
+                    this._records.push(...newRecords.map(addMeta));
+                } else if(Array.isArray(newRecords.records)) {
+                    this._records.push(...newRecords.records.map(addMeta));
+                }
+            }
         }
+
+        this._records = this._records.sort((a, b) => a.name.localeCompare(b.name));
     }
 
     private save() {
