@@ -1,0 +1,38 @@
+{
+  "name": "npm-config",
+  "version": "1.0.0",
+  "description": "Save and load npmrc files",
+  "main": "src/index.ts",
+  "bin": {
+    "npmcfg": "./bin/npmcfg.js"
+  },
+  "scripts": {
+    "start": "ts-node ./src/index.ts",
+    "install:cli": "npm link"
+  },
+  "keywords": [
+    "npm",
+    "npmrc",
+    "config",
+    "cli",
+    "tool"
+  ],
+  "author": {
+    "name": "Ben Force",
+    "email": "benforce@gmail.com",
+    "url": "https://thebenforce.com"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@inquirer/prompts": "^3.0.4",
+    "commander": "^11.0.0",
+    "listr": "^0.14.3",
+    "table": "^6.8.1"
+  },
+  "devDependencies": {
+    "@tsconfig/node18": "^18.2.1",
+    "@types/listr": "^0.14.4",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.2.2"
+  }
+}
