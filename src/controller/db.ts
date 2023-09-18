@@ -48,7 +48,8 @@ export class ConfigDB {
     private loadDatabase() {
         this._records = [];
 
-        for(const filename in [this.dbFilename, this.localDbFilename]) {
+        for(const filename of [this.dbFilename, this.localDbFilename]) {
+            
             if (fs.existsSync(filename)) {
                 const newRecords = JSON.parse(fs.readFileSync(filename, 'utf-8'));
                 const addMeta = (record: ConfigRecord) => ({
@@ -60,6 +61,8 @@ export class ConfigDB {
                     this._records.push(...newRecords.map(addMeta));
                 } else if(Array.isArray(newRecords.records)) {
                     this._records.push(...newRecords.records.map(addMeta));
+                } else {
+                    throw new Error(`Invalid database format in ${filename}`);
                 }
             }
         }
