@@ -4,11 +4,11 @@
   "description": "Save and load npmrc files",
   "main": "src/index.ts",
   "bin": {
-    "npmcfg": "./bin/npmcfg.js"
+    "npmcfg": "./src/index.ts"
   },
   "scripts": {
     "start": "ts-node ./src/index.ts",
-    "install:cli": "npm link"
+    "install:cli": "yarn global add \"file:$PWD\""
   },
   "keywords": [
     "npm",

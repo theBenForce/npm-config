@@ -38,7 +38,7 @@ export class ConfigDB {
     }
 
     private get dbFilename() {
-        return path.join(os.homedir(), '/.npmrepos.json');
+        return path.join(os.homedir(), '.npmrepos.json');
     }
 
     private get localDbFilename() {
@@ -47,8 +47,9 @@ export class ConfigDB {
 
     private loadDatabase() {
         this._records = [];
+        const configFilenames = new Set([this.dbFilename, this.localDbFilename]);
 
-        for(const filename of [this.dbFilename, this.localDbFilename]) {
+        for(const filename of configFilenames) {
             
             if (fs.existsSync(filename)) {
                 const newRecords = JSON.parse(fs.readFileSync(filename, 'utf-8'));

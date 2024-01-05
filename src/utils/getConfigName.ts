@@ -9,6 +9,7 @@ export const getConfigName = async (db: ConfigDB, name?: string): Promise<string
             name: config.name,
             value: config.name,
         })),
+        // @ts-ignore
         validate(value) {
             if (!value) {
                 return 'You must select a config';
